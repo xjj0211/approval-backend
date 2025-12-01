@@ -1,98 +1,79 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚀 审批系统后端服务 | Approval System Server
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+> 基于 NestJS + TypeScript 构建的 RESTful API 服务，为审批系统前端提供数据持久化、表单配置下发及业务逻辑处理能力。
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 📚 项目介绍
+本项目是 [前端审批系统] 的配套后端服务。利用 NestJS 框架的模块化特性，实现了审批单的 CRUD、复杂的筛选分页查询以及动态 Schema 下发。
 
-## Description
+### 💡 核心特性
+* **全量接口支持**：实现了列表查询（支持多维度筛选）、详情、创建、更新、审批（通过/驳回）等 7 大核心接口。
+* **动态 Schema 下发**：提供 `/schema` 接口，向前端下发 JSON 格式的表单配置，控制前端渲染逻辑。
+* **文件流处理**：支持 Base64 格式的大文件（图片/Excel）传输与存储，配置了 50MB 的 Payload 限制。
+* **内存数据持久化**：使用 In-Memory 模拟数据库操作，支持数据的实时读写（服务重启后重置）。
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🛠️ 技术栈
+* **框架**: NestJS (Node.js)
+* **语言**: TypeScript
+* **验证**: class-validator, class-transformer
+* **部署**: Render
 
-## Project setup
+## 🔌 API 接口文档
 
-```bash
-$ npm install
-```
+### 1. 审批单管理
+| 方法 | 路径 | 描述 |
+| :--- | :--- | :--- |
+| `GET` | `/api/approvals` | 获取审批列表 (支持分页、筛选) |
+| `GET` | `/api/approvals/:id` | 获取审批单详情 |
+| `POST` | `/api/approvals` | 创建新审批单 |
+| `PATCH` | `/api/approvals/:id` | 更新审批单 |
 
-## Compile and run the project
+### 2. 审批操作
+| 方法 | 路径 | 描述 |
+| :--- | :--- | :--- |
+| `POST` | `/api/approvals/:id/pass` | 通过审批 |
+| `POST` | `/api/approvals/:id/reject` | 驳回审批 |
 
-```bash
-# development
-$ npm run start
+### 3. 系统配置
+| 方法 | 路径 | 描述 |
+| :--- | :--- | :--- |
+| `GET` | `/api/approvals/schema` | 获取动态表单 Schema 配置 |
 
-# watch mode
-$ npm run start:dev
+## 🚀 本地运行
 
-# production mode
-$ npm run start:prod
-```
+1. **克隆项目**
+\`\`\`bash
+git clone https://github.com/你的用户名/approval-backend.git
+cd approval-backend
+\`\`\`
 
-## Run tests
+2. **安装依赖**
+\`\`\`bash
+npm install
+\`\`\`
 
-```bash
-# unit tests
-$ npm run test
+3. **启动开发环境**
+\`\`\`bash
+npm run start:dev
+\`\`\`
+服务默认运行在 `http://localhost:3000`。
 
-# e2e tests
-$ npm run test:e2e
+## ⚙️ 核心逻辑示例
+**动态 Schema 数据结构：**
+\`\`\`json
+{
+  "code": 0,
+  "data": [
+    {
+      "field": "projectName",
+      "component": "Input",
+      "validator": { "maxCount": 20 }
+    },
+    {
+      "field": "department",
+      "component": "DepartmentSelect"
+    }
+  ]
+}
+\`\`\`
 
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
